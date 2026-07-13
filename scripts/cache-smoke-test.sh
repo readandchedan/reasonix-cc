@@ -2,6 +2,10 @@
 # cache-smoke-test.sh — verify reasonix's prefix cache stays warm across two one-shot calls.
 #
 # Signal: reasonix --metrics JSON (cache_hit_tokens / cache_miss_tokens).
+# Verified against `reasonix run --help` (reasonix v1.17.10):
+#   -metrics string   write a JSON token/cache/cost summary of the run to this path
+# The JSON fields prompt_tokens, cache_hit_tokens, cache_miss_tokens were confirmed
+# by running real `reasonix run --metrics <path>` calls.
 # A warm cache shows call-2 with a high cache-hit fraction and very few miss tokens.
 set -euo pipefail
 
@@ -28,6 +32,7 @@ run_call() {
   local n="$1"
   local metrics_path="$2"
   printf '\n=== Call %s ===\n' "$n"
+  # --metrics flag verified via `reasonix run --help` and live JSON output.
   reasonix run --model "$MODEL" --metrics "$metrics_path" "$TASK"
 }
 

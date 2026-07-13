@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 # reasonix-delegate.sh — thin wrapper around `reasonix run` for Claude Code plugin use.
-# Usage: reasonix-delegate.sh --model <pro|flash> [--context-file <path>] "<task string>"
+# Usage: reasonix-delegate.sh --model <pro|flash> [--context-file <path>] [--metrics-file <path>] "<task string>"
 # Context may also be piped via stdin.
+#
+# Verified against `reasonix run --help` (reasonix v1.17.10):
+#   -model string   provider name (default: config default_model)
+#   -metrics string write a JSON token/cache/cost summary of the run to this path
+# Provider names verified via `reasonix doctor --json`: deepseek-pro, deepseek-flash.
 set -euo pipefail
 
 usage() {
@@ -117,6 +122,7 @@ EOF
   fi
 
   # Map tier to reasonix provider name.
+  # Verified provider names: deepseek-pro -> deepseek-v4-pro, deepseek-flash -> deepseek-v4-flash.
   local model_id=""
   case "$tier" in
     pro)
@@ -132,6 +138,7 @@ EOF
   esac
 
   # Build the reasonix run command array (always non-empty, so set -u is safe).
+  # --metrics verified: writes JSON with prompt_tokens, cache_hit_tokens, cache_miss_tokens, cost.
   local reasonix_cmd=(reasonix run --model "$model_id")
   if [[ -n "$metrics_file" ]]; then
     reasonix_cmd+=(--metrics "$metrics_file")
