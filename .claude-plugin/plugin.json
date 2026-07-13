@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "reasonix-cc",
+  "version": "0.1.0",
+  "description": "Delegate coarse, verifiable, high-volume work to DeepSeek via reasonix; Claude orchestrates and verifies.",
+  "author": {
+    "name": "reasonix-cc contributors"
+  },
+  "license": "MIT",
+  "agents": [
+    "./agents/reasonix-rescue.md"
+  ],
+  "commands": [
+    "./commands/delegate.md",
+    "./commands/investigate.md",
+    "./commands/init.md"
+  ]
+}
