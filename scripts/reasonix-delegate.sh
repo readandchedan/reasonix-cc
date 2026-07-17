@@ -229,11 +229,13 @@ EOF
   fi
   reasonix_cmd+=("$task")
 
-  # Invoke reasonix, piping context via stdin when present.
+  # Invoke reasonix. The task is passed as an argv argument (it is the final
+  # element of reasonix_cmd); any gathered context is piped on stdin. The task
+  # must NOT also be echoed to stdin, or reasonix receives the instruction
+  # twice (once as argv, once as stdin).
   local rc=0
   if [[ -n "$context" ]]; then
-    # Prepend context to the task so reasonix receives it on stdin.
-    printf '%s\n\n%s\n' "$context" "$task" | "${reasonix_cmd[@]}" || rc=$?
+    printf '%s\n' "$context" | "${reasonix_cmd[@]}" || rc=$?
   else
     "${reasonix_cmd[@]}" || rc=$?
   fi
