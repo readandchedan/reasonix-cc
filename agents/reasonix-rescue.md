@@ -1,6 +1,6 @@
 ---
 name: reasonix-rescue
-description: Delegate a coarse, self-contained, verifiable task to DeepSeek/reasonix and return only the result digest.
+description: Delegate implementation/coding tasks to DeepSeek/reasonix and return only a result digest. Invoke when the primary agent judges that a task is cheaper to execute on DeepSeek — especially mechanical, high-volume, or verifiable-after-the-fact work.
 model: sonnet
 tools:
   - Bash

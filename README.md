@@ -1,8 +1,8 @@
 # reasonix-cc
 
-A Claude Code plugin that delegates coarse, well-specified, easy-to-verify, high-volume tasks to DeepSeek via the [`reasonix`](https://github.com/esengine/deepseek-reasonix) CLI. Claude stays the orchestrator and verifier; reasonix does the bulk labor (wide file-reading, mechanical edits, log triage, test scaffolding) at a fraction of the token cost.
+A Claude Code plugin that lets Claude delegate implementation work to DeepSeek via the [`reasonix`](https://github.com/esengine/deepseek-reasonix) CLI, using its own judgement about when to hand off. Claude stays the orchestrator and verifier; reasonix does the bulk labor (wide file-reading, mechanical edits, log triage, test scaffolding) at a fraction of the token cost.
 
-Use it when the work is decomposable, verifiable by a test/typecheck/grep, and heavy enough that doing it inline in Claude would burn a lot of context. Keep architecture, ambiguous requirements, and anything where verifying ≈ re-deriving on Claude.
+Claude uses its own judgement to decide whether to delegate — it does not need an explicit `/reasonix:delegate` command or the user's permission. Hand off implementation/coding work (especially mechanical, high-volume, or verifiable-after-the-fact tasks) to the `reasonix-rescue` subagent; keep architecture, ambiguous requirements, and anything where verifying ≈ re-deriving in the main loop.
 
 ## Install
 
@@ -19,13 +19,36 @@ Use it when the work is decomposable, verifiable by a test/typecheck/grep, and h
 
 | Tier | Use for | Who verifies |
 |------|---------|--------------|
-| **Flash** (`/reasonix:delegate --model flash`) | Mechanical, high-volume, simple work: codemods, boilerplate, log triage, simple test scaffolds. | Claude |
-| **Pro** (`/reasonix:delegate --model pro`) | Reasoning-heavier delegated work: investigation synthesis, non-trivial implementation. | Claude |
-| **Opus / Claude** | Orchestration, verification, architecture, ambiguous requirements — never delegated. | — |
+| **Flash** (`--model flash`) | Mechanical, high-volume, simple work: codemods, boilerplate, log triage, simple test scaffolds. | Claude |
+| **Pro** (`--model pro`) | Reasoning-heavier delegated work: investigation synthesis, non-trivial implementation. | Claude |
+| **Opus / Claude** | Judgement, orchestration, verification, architecture, ambiguous requirements — stays in the main loop. | — |
 
-## The delegation rule
+## How delegation gets triggered
 
-> Only delegate work that is **(a)** decomposable, **(b)** cheaply verifiable by Claude — a passing test, a typecheck, a grep-checkable map — and **(c)** tonnage-heavy. Keep architecture, ambiguous requirements, and anything where verifying ≈ re-deriving on Claude.
+Claude decides on its own — inspired by [Simon Willison's "use your judgement" note](https://simonwillison.net/2026/jul/3/judgement/) and the Claude Code team's tip: tell the model to use its own judgement about when to delegate to a lower-power model, rather than dictating a rigid rule. The `reasonix-rescue` subagent's description advertises itself for "implementation/coding tasks the primary agent judges cheaper to execute on DeepSeek", so Claude can invoke it whenever it makes sense.
+
+`/reasonix:delegate` and `/reasonix:investigate` stay as manual escape hatches — they force a delegation even when Claude would otherwise do the work inline. They are not the only trigger.
+
+To make Claude delegate proactively in every project, add a judgment-based rule to your global `~/.claude/CLAUDE.md` (or project `CLAUDE.md` / `AGENTS.md`). A ready-made example:
+
+```markdown
+## Delegation to reasonix
+
+For implementation and coding tasks, use your own judgement to decide whether to
+delegate the work to reasonix (a DeepSeek-backed CLI) instead of doing it inline.
+You do not need an explicit `/reasonix:delegate` command or the user's permission —
+invoke the `reasonix-rescue` subagent whenever your judgement says it is the
+cheaper path.
+
+Worth delegating: mechanical implementation, boilerplate, test scaffolding, log
+triage, wide file reading, codemods — anything where the result is cheaply
+verifiable afterward (a passing test, a typecheck, a grep, a build).
+Keep in the main loop: architecture, ambiguous requirements, design decisions,
+data synthesis, auditing, security-sensitive changes, and anything where
+verifying ≈ re-deriving.
+
+After the digest returns, run the verification yourself and report pass/fail.
+```
 
 ## Cache note
 
