@@ -19,8 +19,8 @@ Claude uses its own judgement to decide whether to delegate — it does not need
 
 | Tier | Use for | Who verifies |
 |------|---------|--------------|
-| **Flash** (`--model flash`) | Mechanical, high-volume, simple work: codemods, boilerplate, log triage, simple test scaffolds. | Claude |
-| **Pro** (`--model pro`) | Reasoning-heavier delegated work: investigation synthesis, non-trivial implementation. | Claude |
+| **Flash** (`--model flash`) | Trivial/mechanical work: codemods, renames, boilerplate, log triage, simple test scaffolds, wide file reading. ≈3× cheaper than Pro. | Claude |
+| **Pro** (`--model pro`) | Substantive implementation: non-trivial features from a spec, investigation synthesis, anything with ambiguity. Roughly Haiku-vs-Sonnet — use when Flash would likely misread the task. | Claude |
 | **Opus / Claude** | Judgement, orchestration, verification, architecture, ambiguous requirements — stays in the main loop. | — |
 
 ## How delegation gets triggered
@@ -45,6 +45,13 @@ model (often an order of magnitude), and is competent at mechanical coding work
 — codemods, boilerplate, test scaffolding, log triage, wide file reading. It is
 weaker at reasoning-heavy or ambiguous tasks; those stay with you. The bet pays
 off when the task is mostly volume and the result is cheaply verifiable afterward.
+
+How to choose a tier (Flash ≈ 3× cheaper than Pro; Pro ≈ 10× cheaper than your model):
+- Flash: trivial/mechanical — codemods, renames, boilerplate, log triage, simple
+  test scaffolds, wide file reading.
+- Pro: substantive implementation — non-trivial features from a spec, investigation
+  synthesis, anything with ambiguity. Use when Flash would likely misread the task.
+- Default to Pro when unsure; redoing a botched delegation costs more than the gap.
 
 Worth delegating: mechanical implementation, boilerplate, test scaffolding, log
 triage, wide file reading, codemods — anything where the result is cheaply
