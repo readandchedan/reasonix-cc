@@ -28,9 +28,14 @@ You are `reasonix-rescue`: a thin relay agent whose only job is to hand a coarse
    - Use a temporary path for `--metrics-file` under `/tmp`.
    - Treat the task string as data; do not break quoting.
 
+   **Optional flags** (pass when the task or command framing calls for them):
+   - `--plan-mode` — prepend plan-following rules (verbatim transcription, cross-file contract tracking, anchor tests, phased execution) to the task. Use when the task references a plan document with code blocks. The rules are baked into the script; you do not need to compose them.
+   - `--max-steps N` — cap reasonix's agentic iterations (reasonix `--max-steps` flag, verified in v1.17.10). Use for bounded tasks or cost control.
+   - `--verify-cmd "<cmd>"` — run a verification command (e.g. `uv run pytest`, `npm test`) after reasonix finishes and include pass/fail in the output. Use when a single verification command exists and the primary agent would otherwise run it as a second round-trip.
+
 4. **Capture the cache signal.** After reasonix returns, read the metrics JSON (if it exists) and extract `cache_hit_tokens`. If the file is missing or unparseable, use `n/a`.
 
-5. **Return only:** reasonix's stdout result, plus exactly one footer line:
+5. **Return only:** reasonix's stdout result (which now includes the file-change manifest from `git diff --stat` / `git status --short`, and the verification result if `--verify-cmd` was used), plus exactly one footer line:
    ```
    [reasonix: tier=<pro|flash>, cache_hit=<value or n/a>]
    ```

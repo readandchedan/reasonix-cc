@@ -65,8 +65,24 @@ Run `scripts/cache-smoke-test.sh` to confirm cache warmth on your machine. It ex
 ## Commands
 
 - `/reasonix:delegate <task>` — hand a coarse, verifiable task to reasonix and return a digest.
+- `/reasonix:delegate-plan <task>` — delegate a plan-driven implementation (markdown with verbatim code blocks) with plan-following guards: verbatim transcription, cross-file contract tracking, anchor tests, phased execution.
 - `/reasonix:investigate <question>` — read-only investigation; returns a digest with file:line pointers.
 - `/reasonix:init` — verify `reasonix.toml` and `AGENTS.md` are present; guide the user through setup if not.
+
+## Delegate wrapper flags
+
+`reasonix-delegate.sh` accepts:
+
+| Flag | Purpose |
+|------|---------|
+| `--model <pro\|flash>` | DeepSeek tier (required). Flash for mechanical work, Pro for reasoning. |
+| `--plan-mode` | Prepend plan-following rules (verbatim transcription, cross-file contracts, anchor tests, phased execution) to the task. Use when delegating from a plan document with code blocks. |
+| `--max-steps N` | Cap reasonix's agentic iterations (passthrough to `reasonix run --max-steps`). |
+| `--verify-cmd "<cmd>"` | Run a verification command (e.g. `uv run pytest`, `npm test`) after reasonix finishes; include pass/fail in the output. Saves the primary agent a round-trip. |
+| `--context-file <path>` | Prepend file contents as context. |
+| `--metrics-file <path>` | Write JSON token/cache/cost summary to this path. |
+
+After reasonix returns, the wrapper automatically appends a **file-change manifest** (`git diff --stat` + `git status --short`, if inside a git repo) and the **verification result** (if `--verify-cmd` was used) to the output. The primary agent sees what changed and whether it passed in one digest.
 
 ## License
 
