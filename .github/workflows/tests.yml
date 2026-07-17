@@ -1,0 +1,13 @@
+name: tests
+on:
+  push:
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Shell syntax check
+        run: bash -n scripts/reasonix-delegate.sh && bash -n scripts/cache-smoke-test.sh
+      - name: Run offline delegate-wrapper tests
+        run: bash tests/run.sh

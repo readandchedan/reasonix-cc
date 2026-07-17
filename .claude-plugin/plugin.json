@@ -12,6 +12,7 @@
   ],
   "commands": [
     "./commands/delegate.md",
+    "./commands/delegate-plan.md",
     "./commands/investigate.md",
     "./commands/init.md"
   ]

@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Test double for the reasonix CLI. It performs no real work; it only records
+# how it was invoked (argv + stdin) so the delegate-wrapper tests can assert on
+# what reasonix-delegate.sh actually passed. Requires REASONIX_STUB_LOG.
+{
+  printf 'ARGV:'
+  printf ' [%s]' "$@"
+  printf '\n'
+  if [[ ! -t 0 ]]; then
+    printf -- '---STDIN---\n'
+    cat
+    printf -- '\n---END-STDIN---\n'
+  fi
+} >"${REASONIX_STUB_LOG:?REASONIX_STUB_LOG must be set}"
