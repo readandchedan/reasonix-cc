@@ -1,6 +1,6 @@
 ---
 name: reasonix-rescue
-description: Delegate implementation/coding tasks to DeepSeek/reasonix and return only a result digest. Invoke when the primary agent judges that a task is cheaper to execute on DeepSeek — especially mechanical, high-volume, or verifiable-after-the-fact work.
+description: Delegate implementation/coding tasks to DeepSeek/reasonix and return only a result digest. DeepSeek Flash via reasonix is far cheaper per token than your own model and is competent at mechanical coding work (codemods, boilerplate, test scaffolding, log triage, wide file reading) — weaker at reasoning-heavy or ambiguous tasks. Invoke when your judgement says the task fits the former and the result is cheaply verifiable afterward.
 model: sonnet
 tools:
   - Bash

@@ -40,6 +40,12 @@ You do not need an explicit `/reasonix:delegate` command or the user's permissio
 invoke the `reasonix-rescue` subagent whenever your judgement says it is the
 cheaper path.
 
+Why delegate: DeepSeek Flash via reasonix is far cheaper per token than your own
+model (often an order of magnitude), and is competent at mechanical coding work
+— codemods, boilerplate, test scaffolding, log triage, wide file reading. It is
+weaker at reasoning-heavy or ambiguous tasks; those stay with you. The bet pays
+off when the task is mostly volume and the result is cheaply verifiable afterward.
+
 Worth delegating: mechanical implementation, boilerplate, test scaffolding, log
 triage, wide file reading, codemods — anything where the result is cheaply
 verifiable afterward (a passing test, a typecheck, a grep, a build).
